@@ -1,18 +1,28 @@
-# Project Plan: Fine-Tuning GPT on Wizard of Oz Text
+from utils.models import load_pretrained_model
+from utils.tokenizer import get_tokenizer
+from utils.device import get_device
+from scripts.generate import generate_text
 
-# ## 1. Data Preparation
-# - Tokenize and process Wizard of Oz text using `Tokenizer`.
-# - Create a dataset and dataloader in PyTorch.
+PROMPT = "Once upon a time in the land of Oz"
 
-# ## 2. Load Pre-trained GPT Model
-# - Use `transformers` to load a GPT model (e.g., `GPT-2`).
-# - Modify for fine-tuning (if needed).
+def pretrained_gpt():
+    tokenizer = get_tokenizer()
+    model = load_pretrained_model()
+    device = get_device()
 
-# ## 3. Fine-Tune on Wizard of Oz
-# - Adjust hyperparameters (`learning_rate`, `epochs`, etc.).
-# - Train the model with PyTorch’s `Trainer` API or a custom loop.
+    inputs = tokenizer(PROMPT, return_tensors="pt", max_length=1024, truncation=True).to(device)
 
-# ## 4. Evaluate & Generate Text
-# - Test how well the model learned the Wizard of Oz text.
-# - Analyze cross-entropy loss for model performance
-# - Use the model to generate new Wizard of Oz-style text.
+    generated_text = generate_text(tokenizer, inputs, model)
+
+    print("Pre-Trained Generated Text:\n", generated_text)
+
+def fine_tuned_gpt():
+    # Tokenize "Wizard of Oz" text
+    with open("wizard_of_oz.txt", "r") as file:
+        text = file.read()
+
+    # Max token length for GPT2
+    # inputs = tokenizer(text, return_tensors="pt", max_length=1024, truncation=True)
+
+if __name__ == "__main__":
+    pretrained_gpt()
