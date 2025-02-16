@@ -2,6 +2,7 @@ from utils.models import load_pretrained_model
 from utils.tokenizer import get_tokenizer, tokenize_text
 from model.train import fine_tune
 from model.generate import generate_text
+from transformers import pipeline
 
 PROMPT = "Once upon a time in the land of Oz"
 
@@ -45,10 +46,26 @@ def fine_tuned_gpt():
 
     print("Fine-Tuned Generated Text:\n", generated_text)
 
+    fine_tuned_model.save_pretrained("data/fine_tuned_gpt2/")
+    tokenizer.save_pretrained("data/fine_tuned_gpt2/")
+
+
+def pipeline_gpt():
+    """
+    Utilize the fine-tuned gpt2 model (with 'Wizard of Oz' text) and pipeline 
+    to generate text for the PROMPT.
+    """
+    model = "data/fine_tuned_gpt2/"
+    generator = pipeline('text-generation', model=model, tokenizer=model)
+
+    result = generator(PROMPT, truncation=True, max_length=50, temperature=0.7, top_k=50)
+    print("Pipeline Generated Text: ", result[0]['generated_text'])
+
 
 if __name__ == "__main__":
-    pretrained_gpt()
-    fine_tuned_gpt()
+    # pretrained_gpt()
+    # fine_tuned_gpt()
+    pipeline_gpt()
 
     # Pre-Trained Generated Text:
     # Once upon a time in the land of Oz, he was brought into the palace of the Great Gaius, 
@@ -60,3 +77,9 @@ if __name__ == "__main__":
 
     # I am very curious to see if I can help. I found out that if I tell you, 
     # I will receive a gift of my own. I want to
+
+    # Pipeline Generated Text:
+    # Once upon a time in the land of Oz, there was one who was so good at magic that he was 
+    # able to cast fire spells for himself.
+
+    # The world had once been so peaceful and peaceful, but now it was all topsy-
